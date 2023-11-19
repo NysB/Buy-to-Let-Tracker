@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="..\static\css\style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <div class="header">
+        <h2>Property Tracker</h2>
+        <br></br>
+    </div>
+    
+    <div class="container">
+
+        <div class="sidebar">
+            
+            <form id="filter-form" action="/filter" method="post">
+                <h3>Define Search</h3>
+                <label for="min-price"><i class="fa">&#8364;</i> Minimum Purchase Price</label>
+                <input name="min-price" type="text" id="min-price" class="input-field">
+                <br></br>
+                <label for="max-price"><i class="fa">&#8364;</i> Maximum Purchase Price</label>
+                <input name="max-price" type="text" id="max-price" class="input-field">
+                <br></br>
+                <label for="municipality"><i class="fa fa-map-marker"></i> Municipality</label>
+                <select name="municipality" name="municipality" id="municipality">
+                    <option value="Estepona">Estepona</option>
+                    <option value="Málaga">Málaga</option>
+                    <option value="Marbella">Marbella</option>
+                    <option value="Fuengirola">Fuengirola</option>
+                    <option value="Cádiz">Cádiz</option>
+                </select>
+                <br></br>
+                <h3>Define Funding</h3>
+                <label for="ltv"> Loan-to-Value (%)</label>
+                <input name="ltv" type="text" id="ltv" class="input-field">
+                <br></br>
+                <label for="mortgage-rate"> Mortgage Rate (%)</label>
+                <input name="mortgage-rate" type="text" id="mortgage-rate" class="input-field">
+                <br></br>
+                <label for="mortgage-tenor"> Mortgage Tenor (years)</label>
+                <input name="mortgage-tenor" type="text" id="mortgage-tenor" class="input-field">
+                <br></br>
+                <button type="submit" id="filter-button" class="green-button">Filter Overview</button>
+            </form>
+        </div>
+
+        <div class="content">
+            <div id="map" class="map"></div>
+            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                <script src="../static/js/propertyMap.js"></script>
+            
+            <div class="property-info" id="selected-property-info">
+                <h2>Property Information</h2>
+                <h3>Economics</h3>
+                <p id="price">Price: €</p>
+                <p id="predicted-rent">Predicted Monthly Rent (LT): €</p>
+                <h3>Description</h3>
+                <p id="bedrooms">Bedrooms:</p>
+                <p id="bathrooms">Bathrooms:</p>
+                <p id="size">Size:</p>
+                <p id="status">Status:</p>
+                <p id="floor">Floor:</p>
+                <p id="has-lift">Has Lift:</p>
+                <p id="new-development">New Development:</p>
+                <p id="property-size">Size:</p>
+                <p id="property-url">URL:</p>
+            </div>
+        
+            <canvas id="roi-chart" width="400" height="200"></canvas>
+
+        </div>
+    </div>
+</body>
+</html>
