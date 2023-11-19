@@ -3,4 +3,4 @@
 This app will scrape information on properties in various city, and return an overview of the return that can be made by buying and letting.
 
 ## URL
-NysB.github.io 
+https://nysb.github.io/ 
