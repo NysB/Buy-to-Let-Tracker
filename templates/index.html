@@ -80,16 +80,6 @@
             padding: 10px;
             margin: 5px;
         }
-        .vertical-container{
-            display: flex;
-            flex-direction: column;
-        }
-        .vertical-block{
-            flex: 1;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin: 5px
-        }
         .map {
             width: 100%;
             max-width: 100%;
@@ -112,6 +102,15 @@
             font-style: normal;
             color: #0f0f0f;
             font-size: 15px;
+        }
+        .horizontal-property-info-block{
+            flex: 1;
+        }
+        .horizontal-link-block{
+            flex: 1;
+            border: 1px solid #160101;
+            padding: 10px;
+            margin: 5px;
         }
     </style>
 </head>
@@ -168,27 +167,71 @@
         <div class="horizontal-property-block">
             <div class="property-info" id="selected-property-info">
                 <h2>Property Information</h2>
-                <h3>Economics</h3>
-                <p id="price">Price: €</p>
-                <p id="predicted-rent">Predicted Monthly Rent (LT): €</p>
-                <h3>Description</h3>
-                <p id="bedrooms">Bedrooms:</p>
-                <p id="bathrooms">Bathrooms:</p>
-                <p id="size">Size:</p>
-                <p id="status">Status:</p>
-                <p id="floor">Floor:</p>
-                <p id="has-lift">Has Lift:</p>
-                <p id="new-development">New Development:</p>
-                <p id="property-size">Size:</p>
-                <p id="property-url">URL:</p>
+                    <h3>Economics</h3>
+                        <div class="horizontal-container">
+                            <div class="horizontal-property-info-block">
+                                <p id="price">Price: €</p>
+                            </div>
+                            <div class="horizontal-property-info-block">
+                                <p id="predicted-rent">Predicted Monthly Rent (LT): €</p>
+                            </div>
+                        </div>
+                    <h3>Description</h3>
+                        <div class="horizontal-container">
+                            <p id="description"></p>
+                        </div>
+                        <div class="horizontal-container">
+                            <div class="horizontal-property-info-block">
+                              <p id="property-type">Property Type:</p>
+                            </div>
+                            <div class="horizontal-property-info-block">
+                              <p id="size">Size:</p>
+                            </div>
+                        </div>
+                        <div class="horizontal-container">
+                            <div class="horizontal-property-info-block">
+                                <p id="bedrooms">Bedrooms:</p>
+                            </div>
+                            <div class="horizontal-property-info-block">
+                                <p id="bathrooms">Bathrooms:</p>
+                            </div>
+                        </div>  
+                        <div class="horizontal-container">
+                            <div class="horizontal-property-info-block">
+                                <p id="status">Status:</p>
+                            </div>
+                            <div class="horizontal-property-info-block">
+                                <p id="new-development">New Development:</p>
+                            </div>
+                        </div>                  
+                        <div class="horizontal-container">
+                            <div class="horizontal-property-info-block">
+                                <p id="floor">Floor:</p>
+                            </div>
+                            <div class="horizontal-property-info-block">
+                                <p id="has-lift">Has Lift:</p>
+                            </div>
+                        </div>  
+                        <div class="horizontal-container">
+                            <div class="horizontal-property-info-block">
+                                <p id="property-url">URL:</p>
+                            </div>
+                        </div>  
             </div>
         </div>
+        
         <div class="horizontal-return-graph-block"> "Return graph"
         </div>
     </div>
-
-    <div class="vertical-container">
-        <div class="vertical-block">
+    <div class="horizontal-container">
+        <div class="horizontal-link-block">
+            <a href="/enrichedPropertyData">All property information</a>
+        </div>
+        <div class="horizontal-link-block">
+            <a href="/comparisonPropertyData">All comp information</a>
+        </div>
+        <div class="horizontal-link-block">
+            <a href="/historicalPurchaseData">Historical data</a>
         </div>
     </div>
 </body>
