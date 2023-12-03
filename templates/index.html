@@ -7,20 +7,123 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="..\static\css\style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <title>Buy-to-Let Tracker</title>
+
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .header {
+            background-color: #2f2f31; 
+            color: #faf1f1;
+            height: 1cm; 
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+        }
+        .horizontal-container{
+            display: flex;
+        }
+        .horizontal-search-block{
+            flex: 1;
+            border: 1px solid #160101;
+            padding: 10px;
+            margin: 5px;
+            background-color: #e9e5e5;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #69d469;
+            font-size: 12px;
+        }
+        .horizontal-search-block h3{
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #101110;
+            font-size: 20px;
+        }
+        .horizontal-search-block label{
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #101110;
+            font-size: 15px;
+        }
+        .green-button {
+            background-color: #4CAF50;
+            width: 80%;
+            color: white;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .horizontal-map-block{
+            flex: 4;
+            border: 1px solid #0e0101;
+            padding: 10px;
+            margin: 5px;
+        }
+        .horizontal-property-block{
+            flex: 1;
+            border: 1px solid #160101;
+            padding: 10px;
+            margin: 5px;
+        }
+        .horizontal-return-graph-block{
+            flex: 1;
+            border: 1px solid #160101;
+            padding: 10px;
+            margin: 5px;
+        }
+        .vertical-container{
+            display: flex;
+            flex-direction: column;
+        }
+        .vertical-block{
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 5px
+        }
+        .map {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+        }
+        .property-info {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: rgb(14, 13, 13);;
+            font-size: 15px;
+        }
+        .property-info h2 {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #4CAF50;
+            font-size: 25px;
+        }
+        .property-info h3 {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #0f0f0f;
+            font-size: 15px;
+        }
+    </style>
 </head>
+
 <body>
     <div class="header">
         <h2>Property Tracker</h2>
         <br></br>
     </div>
     
-    <div class="container">
-
-        <div class="sidebar">
-            
+    <div class="horizontal-container">
+        <div class="horizontal-search-block">
             <form id="filter-form" action="/filter" method="post">
                 <h3>Define Search</h3>
                 <label for="min-price"><i class="fa">&#8364;</i> Minimum Purchase Price</label>
@@ -37,6 +140,7 @@
                     <option value="Fuengirola">Fuengirola</option>
                     <option value="Cádiz">Cádiz</option>
                 </select>
+                
                 <br></br>
                 <h3>Define Funding</h3>
                 <label for="ltv"> Loan-to-Value (%)</label>
@@ -49,14 +153,19 @@
                 <input name="mortgage-tenor" type="text" id="mortgage-tenor" class="input-field">
                 <br></br>
                 <button type="submit" id="filter-button" class="green-button">Filter Overview</button>
+            
             </form>
         </div>
 
-        <div class="content">
+        <div class="horizontal-map-block">
             <div id="map" class="map"></div>
             <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
                 <script src="../static/js/propertyMap.js"></script>
-            
+        </div>
+    </div>
+    
+    <div class="horizontal-container">
+        <div class="horizontal-property-block">
             <div class="property-info" id="selected-property-info">
                 <h2>Property Information</h2>
                 <h3>Economics</h3>
@@ -73,9 +182,13 @@
                 <p id="property-size">Size:</p>
                 <p id="property-url">URL:</p>
             </div>
-        
-            <canvas id="roi-chart" width="400" height="200"></canvas>
+        </div>
+        <div class="horizontal-return-graph-block"> "Return graph"
+        </div>
+    </div>
 
+    <div class="vertical-container">
+        <div class="vertical-block">
         </div>
     </div>
 </body>
