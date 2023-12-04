@@ -95,7 +95,7 @@
             font-family: 'Times New Roman', Times, serif;
             font-style: normal;
             color: #4CAF50;
-            font-size: 25px;
+            font-size: 20px;
         }
         .property-info h3 {
             font-family: 'Times New Roman', Times, serif;
@@ -105,6 +105,16 @@
         }
         .horizontal-property-info-block{
             flex: 1;
+        }
+        .horizontal-return-graph-block h2 {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #4CAF50;
+            font-size: 20px;
+        }
+        .return-chart {
+            width: 0%;
+            height: 100px;
         }
         .horizontal-link-block{
             flex: 1;
@@ -159,7 +169,7 @@
         <div class="horizontal-map-block">
             <div id="map" class="map"></div>
             <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-                <script src="../static/js/propertyMap.js"></script>
+            <script src="../static/js/propertyMap.js"></script>
         </div>
     </div>
     
@@ -220,7 +230,10 @@
             </div>
         </div>
         
-        <div class="horizontal-return-graph-block"> "Return graph"
+        <div class="horizontal-return-graph-block"> 
+            <h2>Expected Return</h2>
+            <canvas id="returnChart" class="return-chart"></canvas>
+            <script src="../static/js/returnGraph.js"></script>
         </div>
     </div>
     <div class="horizontal-container">
