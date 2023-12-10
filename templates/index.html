@@ -54,6 +54,9 @@
             color: #101110;
             font-size: 15px;
         }
+        .value-input-field {
+            width: 77%;
+        }
         .green-button {
             background-color: #4CAF50;
             width: 80%;
@@ -113,8 +116,7 @@
             font-size: 20px;
         }
         .return-chart {
-            width: 0%;
-            height: 100px;
+            width: 20%;
         }
         .horizontal-link-block{
             flex: 1;
@@ -135,34 +137,63 @@
         <div class="horizontal-search-block">
             <form id="filter-form" action="/filter" method="post">
                 <h3>Define Search</h3>
-                <label for="min-price"><i class="fa">&#8364;</i> Minimum Purchase Price</label>
-                <input name="min-price" type="text" id="min-price" class="input-field">
+                <label for="min-price"> Minimum Purchase Price</label>
+                <select name="min-price" id="min-price" class="value-input-field">
+                    <option value="0">EUR 0</option>
+                    <option value="50000">EUR 50,000</option>
+                    <option value="100000">EUR 100,000</option>
+                    <option value="150000">EUR 150,000</option>
+                    <option value="200000">EUR 200,000</option>
+                </select>
                 <br></br>
-                <label for="max-price"><i class="fa">&#8364;</i> Maximum Purchase Price</label>
-                <input name="max-price" type="text" id="max-price" class="input-field">
+                <label for="max-price"> Maximum Purchase Price</label>
+                <select name="max-price" id="max-price" class="value-input-field">
+                    <option value="50000">EUR 50,000</option>
+                    <option value="100000">EUR 100,000</option>
+                    <option value="150000">EUR 150,000</option>
+                    <option value="200000">EUR 200,000</option>
+                    <option value="250000">EUR 250,000</option>
+                </select>
                 <br></br>
                 <label for="municipality"><i class="fa fa-map-marker"></i> Municipality</label>
-                <select name="municipality" name="municipality" id="municipality">
+                <select name="municipality" id="municipality" class="value-input-field">
                     <option value="Estepona">Estepona</option>
                     <option value="Málaga">Málaga</option>
                     <option value="Marbella">Marbella</option>
                     <option value="Fuengirola">Fuengirola</option>
                     <option value="Cádiz">Cádiz</option>
                 </select>
-                
                 <br></br>
                 <h3>Define Funding</h3>
-                <label for="ltv"> Loan-to-Value (%)</label>
-                <input name="ltv" type="text" id="ltv" class="input-field">
+                <label for="ltv"> Loan-to-Value</label>
+                <select name="ltv" id="ltv" class="value-input-field">
+                    <option value="0.5">50%</option>
+                    <option value="0.6">60%</option>
+                    <option value="0.7">70%</option>
+                    <option value="0.8">80%</option>
+                    <option value="0.9">90%</option>
+                </select>
                 <br></br>
                 <label for="mortgage-rate"> Mortgage Rate (%)</label>
                 <input name="mortgage-rate" type="text" id="mortgage-rate" class="input-field">
                 <br></br>
-                <label for="mortgage-tenor"> Mortgage Tenor (years)</label>
-                <input name="mortgage-tenor" type="text" id="mortgage-tenor" class="input-field">
+                <label for="mortgage-tenor"> Mortgage Tenor</label>
+                <select name="mortgage-tenor" id="mortgage-tenor" class="value-input-field">
+                    <option value="10">10 years</option>
+                    <option value="15">15 years</option>
+                    <option value="20">20 years</option>
+                    <option value="25">25 years</option>
+                    <option value="30">30 years</option>
+                </select>
+                <br></br>
+                <h3>Define Rent Income</h3>
+                <label for="taxes"> Taxes (%)</label>
+                <input name="taxes" type="text" id="taxes" class="input-field">
+                <br></br>
+                <label for="maintenance"> Maintenance (% of income)</label>
+                <input name="maintenance" type="text" id="maintenance" class="input-field">
                 <br></br>
                 <button type="submit" id="filter-button" class="green-button">Filter Overview</button>
-            
             </form>
         </div>
 
@@ -233,6 +264,7 @@
         <div class="horizontal-return-graph-block"> 
             <h2>Expected Return</h2>
             <canvas id="returnChart" class="return-chart"></canvas>
+            <canvas id="balanceSheetChart" class="return-chart"></canvas>
             <script src="../static/js/returnGraph.js"></script>
         </div>
     </div>
