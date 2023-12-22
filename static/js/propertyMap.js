@@ -8,6 +8,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Initialize properties as an empty array
 let properties = [];
 
+// Variable to store the selected property
+let selectedProperty = null;
+
 // Function to fetch data from the server and initialize the map with it
 function initializeMap() {
   fetch('/start')
@@ -44,6 +47,9 @@ function updateMap(data) {
     `).openPopup();
 
     marker.on('click', () => {
+      // Set the selected property globally
+      selectedProperty = property;
+      
       document.getElementById('selected-property-info').innerHTML = `
         <h3>Economics</h3>
         <div class="horizontal-container">

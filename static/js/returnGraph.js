@@ -123,11 +123,13 @@ function getRemainingLoanBalance(schedule, years) {
 
 // Example usage:
 
-const purchasePrice = 200000;
-const loanToValue = 0.7;
-const annualInterestRate = 3.5;
-const loanTermInYears = 15;
-const monthlyRent = 1000;
+const purchasePrice = selectedProperty.purchasePrice || 200000;
+const loanToValue = parseFloat(document.getElementById('ltv').value) || 0.7;
+const annualInterestRate = parseFloat(document.getElementById('mortgage-rate').value) || 3.5;
+const loanTermInYears = parseInt(document.getElementById('mortgage-tenor').value) || 15;
+const monthlyRent = selectedProperty.predictedMonthlyRent || 1000;
+const rentTax = parseFloat(document.getElementById('taxes').value) || 0.20;
+const maintenanceCost = parseFloat(document.getElementById('maintenance').value) || 0.05;
 
 
 // Calculations
@@ -159,8 +161,6 @@ for (let i = 1; i <= loanTermInYears; i++) {
     }
 }
 
-var returnData = [2, 2, 2, 2, 2];
-
 var propertyValueData = [purchasePrice];
 for (let i = 2; i <= loanTermInYears; i++) {
     propertyValueData.push(purchasePrice);
@@ -174,6 +174,28 @@ for (let i = 2; i <= loanTermInYears; i++) {
     }
 }
 
+var returnData = [0]; 
+for (let i = 1; i <= loanTermInYears; i++) {
+    if (specificYears.includes(i)) {
+        const cumulativePrincipal = getCumulativePrincipalPayment(amortizationSchedule, i);
+        const cumulativeInterest = getCumulativeInterestPayment(amortizationSchedule, i);
+        const cumulativeRent = calculateCumulativeRent(monthlyRent, i);
+
+        // Calculate the current value (property value + cumulative rent)
+        const currentValue = parseFloat(cumulativePrincipal[i]?.cumulativePrincipal || 0) + ((cumulativeRent * (1-maintentanceCost)) * (1-rentTax)) - parseFloat(cumulativeInterest[i]?.cumulativeInterest || 0);
+
+        // Calculate the return on investment (ROI)
+        const initialInvestment = purchasePrice * (1-loanToValue);
+        const returnOnInvestment = (currentValue / initialInvestment) * 100;
+
+        returnData.push(returnOnInvestment.toFixed(2));
+    }
+}
+
+var initialInvestment = [purchasePrice * (1-loanToValue)];
+
+//backgroundColor: 'rgba(169, 209, 142, 1)',
+//borderColor: 'rgba(56, 87, 35, 1)',
 
 // Set up Return Chart
 
@@ -184,9 +206,16 @@ var returnChart = new Chart(ctx, {
         labels: ["Year 0", "Year 1", "Year 2", "Year 3", "Year 4", "Year 5", "Year 10", "Maturity"],
         datasets: [
             {
+                label: 'Initial Investment',
+                backgroundColor: 'rgba(9, 91, 255, 1)',
+                borderColor: 'rgba(127, 127, 127, 1)',
+                borderWidth: 1,
+                data: initialInvestment,
+            },
+            {
                 label: 'Cumulative Rent Earned',
-                backgroundColor: 'rgba(169, 209, 142, 1)',
-                borderColor: 'rgba(56, 87, 35, 1)',
+                backgroundColor: 'rgba(157, 195, 230, 1)',
+                borderColor: 'rgba(0, 32, 96, 1)',
                 borderWidth: 1,
                 data: cumulativeRentData,
             },
@@ -199,8 +228,8 @@ var returnChart = new Chart(ctx, {
             },
             {
                 label: 'Cumulative Principal Paid',
-                backgroundColor: 'rgba(157, 195, 230, 1)',
-                borderColor: 'rgba(0, 32, 96, 1)',
+                backgroundColor: 'rgba(244, 177, 131, 1)',
+                borderColor: 'rgba(237, 125, 49, 1)',
                 borderWidth: 1,
                 data: cumulativePrincipalData,
             },
@@ -208,18 +237,25 @@ var returnChart = new Chart(ctx, {
                 label: 'Expected return',
                 type: 'line',
                 fill: false,
-                borderColor: 'rgba(255, 206, 86, 1)',
-                borderWidth: 2,
+                backgroundColor: 'rgba(0, 176, 80, 1)',
+                borderColor: 'rgba(0, 176, 80, 1)',
+                borderWidth: 3,
                 pointRadius: 4,
                 pointHoverRadius: 6,
                 data: returnData,
-                yAxisID: 'return-axis',
+                yAxisID: 'logarithmic-axis',
             },
         ],
     },
     options: {
         scales: {
             y: {
+                display: false,
+            },
+            logarithmic: {
+                type: 'logarithmic', 
+                position: 'right', 
+                id: 'logarithmic-axis', 
                 display: false,
             },
             x: {
@@ -229,26 +265,25 @@ var returnChart = new Chart(ctx, {
     },
 });
 
-
 // Set up Balance Sheet Chart
 
 var ctx = document.getElementById('balanceSheetChart').getContext('2d');
-var returnChart = new Chart(ctx, {
+var balanceSheetChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: ["Year 0", "Year 1", "Year 2", "Year 3", "Year 4", "Year 5", "Year 10", "Maturity"],
         datasets: [
             {
-                label: 'Expected annual rent',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                label: 'Property Value',
+                backgroundColor: 'rgba(197, 224, 180, 1)',
+                borderColor: 'rgba(56, 87, 35, 1)',
                 borderWidth: 1,
                 data: propertyValueData,
             },
             {
-                label: 'Annual mortgage payment',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                label: 'Outstanding Mortgage',
+                backgroundColor: 'rgba(244, 177, 131, 1)',
+                borderColor: 'rgba(132, 60, 12, 1)',
                 borderWidth: 1,
                 data: OutstandingMortgageData,
             },
