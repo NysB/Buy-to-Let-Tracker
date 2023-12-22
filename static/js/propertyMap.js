@@ -27,6 +27,32 @@ function initializeMap() {
 // Call the initializeMap function to fetch and display the data
 initializeMap();
 
+// Function to fetch filtered data from the server and update the map with it
+function filterAndRefreshMap() {
+  const minPrice = document.getElementById('min-price').value;
+  const maxPrice = document.getElementById('max-price').value;
+  const municipality = document.getElementById('municipality').value;
+
+  fetch('/filter', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `min-price=${minPrice}&max-price=${maxPrice}&municipality=${municipality}`,
+  })
+    .then(response => response.json())
+    .then(filteredData => {
+      properties = filteredData;
+      updateMap(properties);
+    })
+    .catch(error => {
+      console.error('Error fetching filtered data:', error);
+    });
+}
+
+// Attach the filterAndRefreshMap function to the Filter button click event
+document.getElementById('filter-button').addEventListener('click', filterAndRefreshMap);
+
 // Function to update the map with markers
 function updateMap(data) {
   // Clear existing markers
@@ -39,6 +65,12 @@ function updateMap(data) {
   // Add new markers
   data.forEach(property => {
     const marker = L.marker([property.lat, property.lon]).addTo(map);
+
+    // Function to update the selected property when a marker is clicked
+    function updateSelectedProperty() {
+      selectedProperty = property;
+    }
+
     const image = property.image;
     marker.bindPopup(`
       <strong>${property.propertyType}</strong><br>
@@ -47,8 +79,7 @@ function updateMap(data) {
     `).openPopup();
 
     marker.on('click', () => {
-      // Set the selected property globally
-      selectedProperty = property;
+      updateSelectedProperty();
       
       document.getElementById('selected-property-info').innerHTML = `
         <h3>Economics</h3>

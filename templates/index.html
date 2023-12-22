@@ -130,12 +130,11 @@
 <body>
     <div class="header">
         <h2>Property Tracker</h2>
-        <br></br>
     </div>
     
     <div class="horizontal-container">
         <div class="horizontal-search-block">
-            <form id="filter-form" action="/filter" method="post">
+            <form id="filter-form">
                 <h3>Define Search</h3>
                 <label for="min-price"> Minimum Purchase Price</label>
                 <select name="min-price" id="min-price" class="value-input-field">
@@ -164,6 +163,9 @@
                     <option value="Cádiz">Cádiz</option>
                 </select>
                 <br></br>
+                <button type="button" id="filter-button" class="green-button">Filter Overview</button>
+                <br></br>
+            </form>
                 <h3>Define Funding</h3>
                 <label for="ltv"> Loan-to-Value</label>
                 <select name="ltv" id="ltv" class="value-input-field">
@@ -171,30 +173,29 @@
                     <option value="0.6">60%</option>
                     <option value="0.7">70%</option>
                     <option value="0.8">80%</option>
-                    <option value="0.9">90%</option>
+                    <option value="0.9" selected>90%</option>
                 </select>
                 <br></br>
                 <label for="mortgage-rate"> Mortgage Rate (%)</label>
-                <input name="mortgage-rate" type="text" id="mortgage-rate" class="input-field">
+                <input name="mortgage-rate" type="text" id="mortgage-rate" class="input-field" value="4">
                 <br></br>
                 <label for="mortgage-tenor"> Mortgage Tenor</label>
                 <select name="mortgage-tenor" id="mortgage-tenor" class="value-input-field">
                     <option value="10">10 years</option>
                     <option value="15">15 years</option>
                     <option value="20">20 years</option>
-                    <option value="25">25 years</option>
+                    <option value="25" selected>25 years</option>
                     <option value="30">30 years</option>
                 </select>
                 <br></br>
                 <h3>Define Rent Income</h3>
                 <label for="taxes"> Taxes (%)</label>
-                <input name="taxes" type="text" id="taxes" class="input-field">
+                <input name="taxes" type="text" id="taxes" class="input-field" value="15">
                 <br></br>
                 <label for="maintenance"> Maintenance (% of income)</label>
-                <input name="maintenance" type="text" id="maintenance" class="input-field">
+                <input name="maintenance" type="text" id="maintenance" class="input-field" value="10">
                 <br></br>
-                <button type="submit" id="filter-button" class="green-button">Filter Overview</button>
-            </form>
+                <button type="button" id="update-button" class="green-button">Update Graphs</button> 
         </div>
 
         <div class="horizontal-map-block">
@@ -260,7 +261,6 @@
                         </div>  
             </div>
         </div>
-        
         <div class="horizontal-return-graph-block"> 
             <h2>Expected Return</h2>
             <canvas id="returnChart" class="chart"></canvas>

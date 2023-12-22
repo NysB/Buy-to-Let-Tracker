@@ -123,13 +123,13 @@ function getRemainingLoanBalance(schedule, years) {
 
 // Example usage:
 
-const purchasePrice = selectedProperty.purchasePrice || 200000;
-const loanToValue = parseFloat(document.getElementById('ltv').value) || 0.7;
-const annualInterestRate = parseFloat(document.getElementById('mortgage-rate').value) || 3.5;
-const loanTermInYears = parseInt(document.getElementById('mortgage-tenor').value) || 15;
-const monthlyRent = selectedProperty.predictedMonthlyRent || 1000;
-const rentTax = parseFloat(document.getElementById('taxes').value) || 0.20;
-const maintenanceCost = parseFloat(document.getElementById('maintenance').value) || 0.05;
+const purchasePrice = 200000;
+const loanToValue = 0.7;
+const annualInterestRate = 3.5;
+const loanTermInYears = 15;
+const monthlyRent = 1000;
+const rentTax = 0.20;
+const maintenanceCost = 0.05;
 
 
 // Calculations
@@ -182,7 +182,7 @@ for (let i = 1; i <= loanTermInYears; i++) {
         const cumulativeRent = calculateCumulativeRent(monthlyRent, i);
 
         // Calculate the current value (property value + cumulative rent)
-        const currentValue = parseFloat(cumulativePrincipal[i]?.cumulativePrincipal || 0) + ((cumulativeRent * (1-maintentanceCost)) * (1-rentTax)) - parseFloat(cumulativeInterest[i]?.cumulativeInterest || 0);
+        const currentValue = parseFloat(cumulativePrincipal[i]?.cumulativePrincipal || 0) + ((cumulativeRent * (1-maintenanceCost)) * (1-rentTax)) - parseFloat(cumulativeInterest[i]?.cumulativeInterest || 0);
 
         // Calculate the return on investment (ROI)
         const initialInvestment = purchasePrice * (1-loanToValue);
@@ -194,8 +194,6 @@ for (let i = 1; i <= loanTermInYears; i++) {
 
 var initialInvestment = [purchasePrice * (1-loanToValue)];
 
-//backgroundColor: 'rgba(169, 209, 142, 1)',
-//borderColor: 'rgba(56, 87, 35, 1)',
 
 // Set up Return Chart
 
@@ -291,17 +289,15 @@ var balanceSheetChart = new Chart(ctx, {
     },
     options: {
         scales: {
-            yAxes: [
-                {
-                    id: 'bar-axis',
-                    type: 'linear',
-                    position: 'left',
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Amount (Bar Axis)',
-                    },
+            y: {
+                id: 'bar-axis',
+                type: 'linear',
+                position: 'left',
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Amount (Bar Axis)',
                 },
-            ],
+            },
         },
     },
 });
