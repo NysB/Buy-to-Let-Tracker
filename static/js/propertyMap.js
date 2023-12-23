@@ -105,7 +105,7 @@ function updateMap(data) {
           </div>  
           <div class="horizontal-container">
             <div class="horizontal-property-info-block">
-              <p id="bathrooms">Bedrooms: ${property.bedrooms}</p>
+              <p id="bedrooms">Bedrooms: ${property.bedrooms}</p>
             </div>
             <div class="horizontal-property-info-block">
               <p id="bathrooms">Bathrooms: ${property.bathrooms}</p>

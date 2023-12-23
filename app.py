@@ -275,6 +275,43 @@ def filter():
     
     return jsonify(filtered_results_list)
 
+@app.route('/startGraph')
+def startGraph():
+
+    ## Create dictionary
+    start_graph_dict = {
+        "purchasePrice": 200000,
+        "loanToValue" : 0.7,
+        "annualInterestRate": 3.5,
+        "loanTermInYears" : 15,
+        "monthlyRent": 1000,
+        "rentTax"  : 0.15,
+        "maintenanceCost" : 0.1
+    }
+    
+    return jsonify(start_graph_dict)
+
+@app.route('/updateGraph', methods=['POST'])
+def updateGraph():
+
+    ltv_input = float(request.form['ltv'])
+    mortgage_rate_input = float(request.form['mortgage-rate'])
+    loan_term_input = float(request.form['mortgage-tenor'])
+    taxes_input = float(request.form['taxes'])
+    maintenance_input = float(request.form['maintenance'])
+
+    ## Create dictionary
+    update_graph_dict = {
+        "purchasePrice": 500000,
+        "loanToValue" : ltv_input,
+        "annualInterestRate": mortgage_rate_input,
+        "loanTermInYears" : loan_term_input,
+        "monthlyRent": 2000,
+        "rentTax"  : taxes_input,
+        "maintenanceCost" : maintenance_input
+    }
+    
+    return jsonify(update_graph_dict)
 
 # start the flask server
 if __name__ == '__main__':
