@@ -75,7 +75,7 @@ function updateMap(data) {
     marker.bindPopup(`
       <strong>${property.propertyType}</strong><br>
       <img src="${image}" alt="Property Image" width="150"><br>
-      Price: €${property.purchasePrice}
+      Price: €${Number(property.purchasePrice).toLocaleString()}
     `).openPopup();
 
     marker.on('click', () => {
@@ -85,10 +85,10 @@ function updateMap(data) {
         <h3>Economics</h3>
         <div class="horizontal-container">
           <div class="horizontal-property-info-block">
-            <p id="price">Price: € ${property.purchasePrice}</p>
+            <p id="price">Price: € ${Number(property.purchasePrice).toLocaleString()}</p>
           </div>
           <div class="horizontal-property-info-block">
-            <p id="predicted-rent">Predicted Monthly Rent (LT): € ${property.predictedMonthlyRent}</p>
+            <p id="predicted-rent">Predicted Monthly Rent (LT): € ${Number(property.predictedMonthlyRent).toLocaleString()}</p>
           </div>
         </div>
         <h3>Description</h3>

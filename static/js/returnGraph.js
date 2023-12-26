@@ -1,11 +1,13 @@
 // Define variables
 let purchasePrice;
+let propertyTax;
 let loanToValue;
 let annualInterestRate;
 let loanTermInYears;
-let monthlyRent;
-let rentTax;
+let monthlyIncome;
+let incomeTax;
 let maintenanceCost;
+let propertyValueIncrease;
 let initialInvestment;
 let cumulativeRentData = [];
 let cumulativeInterestData = [];
@@ -17,12 +19,12 @@ let OutstandingMortgageData = [];
 
 // Calculate Cumulative Rent Earned up to specified years
 
-function calculateCumulativeRent(monthlyRent, years) {
-    const monthsInYear = 12;
+function calculateCumulativeRent(monthlyIncome, years) {
+    let monthsInYear = 12;
     let cumulativeRent = 0;
 
     for (let year = 1; year <= years; year++) {
-        cumulativeRent += monthlyRent * monthsInYear;
+        cumulativeRent += monthlyIncome * monthsInYear;
     }
 
     return cumulativeRent;
@@ -32,10 +34,10 @@ function calculateCumulativeRent(monthlyRent, years) {
 // Calculate monthly mortgage payment
 
 function calculateMortgagePayment(loanAmount, annualInterestRate, loanTermInYears) {
-    const monthlyInterestRate = (annualInterestRate / 12) / 100;
-    const totalPayments = loanTermInYears * 12;
+    let monthlyInterestRate = (annualInterestRate / 12) / 100;
+    let totalPayments = loanTermInYears * 12;
 
-    const monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -totalPayments));
+    let monthlyPayment = (monthlyInterestRate * loanAmount * Math.pow(1 + monthlyInterestRate, totalPayments)) / (Math.pow(1 + monthlyInterestRate, totalPayments)-1);
 
     return monthlyPayment;
 }
@@ -44,17 +46,17 @@ function calculateMortgagePayment(loanAmount, annualInterestRate, loanTermInYear
 // Calculate amortization schedule
 
 function generateAmortizationSchedule(loanAmount, annualInterestRate, loanTermInYears) {
-    const monthlyInterestRate = (annualInterestRate / 12) / 100;
-    const totalPayments = loanTermInYears * 12;
+    let monthlyInterestRate = (annualInterestRate / 12) / 100;
+    let totalPayments = loanTermInYears * 12;
 
-    const monthlyPayment = calculateMortgagePayment(loanAmount, annualInterestRate, loanTermInYears);
+    let monthlyPayment = calculateMortgagePayment(loanAmount, annualInterestRate, loanTermInYears);
 
     let remainingLoanBalance = loanAmount;
-    const amortizationSchedule = [];
+    let amortizationSchedule = [];
 
     for (let month = 1; month <= totalPayments; month++) {
-        const interestPayment = remainingLoanBalance * monthlyInterestRate;
-        const principalPayment = monthlyPayment - interestPayment;
+        let interestPayment = remainingLoanBalance * monthlyInterestRate;
+        let principalPayment = monthlyPayment - interestPayment;
 
         remainingLoanBalance -= principalPayment;
 
@@ -74,11 +76,11 @@ function generateAmortizationSchedule(loanAmount, annualInterestRate, loanTermIn
 // Calculate cumulative interest up to specified years
 
 function getCumulativeInterestPayment(schedule, years) {
-    const interestByYear = {};
+    let interestByYear = {};
     let totalInterest = 0;
 
     for (let i = 0; i < schedule.length; i++) {
-        const year = Math.ceil(schedule[i].month / 12);
+        let year = Math.ceil(schedule[i].month / 12);
 
         if (year > years) {
             break;
@@ -98,11 +100,11 @@ function getCumulativeInterestPayment(schedule, years) {
 // Calculate cumulative principal up to specified years
 
 function getCumulativePrincipalPayment(schedule, years) {
-    const principalByYear = {};
+    let principalByYear = {};
     let totalPrincipal = 0;
 
     for (let i = 0; i < schedule.length; i++) {
-        const year = Math.ceil(schedule[i].month / 12);
+        let year = Math.ceil(schedule[i].month / 12);
 
         if (year > years) {
             break;
@@ -125,7 +127,7 @@ function getRemainingLoanBalance(schedule, years) {
     let remainingBalance = 0;
 
     for (let i = 0; i < schedule.length; i++) {
-        const year = Math.ceil(schedule[i].month / 12);
+        let year = Math.ceil(schedule[i].month / 12);
 
         if (year >= years) {
             remainingBalance = parseFloat(schedule[i].balance);
@@ -255,12 +257,14 @@ function initializeGraph() {
         
         // Assign values from the fetched data
         purchasePrice = data.purchasePrice;
+        propertyTax = data.propertyTax;
         loanToValue = data.loanToValue;
         annualInterestRate = data.annualInterestRate;
         loanTermInYears = data.loanTermInYears;
-        monthlyRent = data.monthlyRent;
-        rentTax = data.rentTax;
+        monthlyIncome = data.monthlyIncome;
+        incomeTax = data.incomeTax;
         maintenanceCost = data.maintenanceCost;
+        propertyValueIncrease = data.propertyValueIncrease;
         
         // Generate cumulative data
         updateGraph();
@@ -285,37 +289,42 @@ function initializeGraph() {
 
 initializeGraph();
 
-
 // Function to fetch filtered data from the server and update the map with it
 function filterAndRefreshGraph() {
-    const ltv = document.getElementById('ltv').value;
-    const mortgageRate = document.getElementById('mortgage-rate').value;
-    const mortgageTenor = document.getElementById('mortgage-tenor').value;
-    const taxes = document.getElementById('taxes').value;
-    const maintenance = document.getElementById('maintenance').value;
+    let paidPurchasePrice = document.getElementById('paid-purchase-price').value;
+    let propertyTax = document.getElementById('property-tax').value;
+    let ltv = document.getElementById('ltv').value;
+    let mortgageRate = document.getElementById('mortgage-rate').value;
+    let mortgageTenor = document.getElementById('mortgage-tenor').value;
+    let incomeTax = document.getElementById('income-taxes').value;
+    let monthlyIncome = document.getElementById('monthly-income').value;
+    let maintenance = document.getElementById('maintenance').value;
+    let propertyValueIncrease = document.getElementById('property-value-increase').value;
 
     fetch('/updateGraph', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `ltv=${ltv}&mortgage-rate=${mortgageRate}&mortgage-tenor=${mortgageTenor}&taxes=${taxes}&maintenance=${maintenance}`,
+      body: `paid-purchase-price=${paidPurchasePrice}&property-tax=${propertyTax}&ltv=${ltv}&mortgage-rate=${mortgageRate}&mortgage-tenor=${mortgageTenor}&monthly-income=${monthlyIncome}&income-tax=${incomeTax}&maintenance=${maintenance}&property-value-increase=${propertyValueIncrease}`,
     })
       .then(response => response.json())
       .then(data => {
         
         // Assign values from the fetched data
         purchasePrice = data.purchasePrice;
+        propertyTax = data.propertyTax;
         loanToValue = data.loanToValue;
         annualInterestRate = data.annualInterestRate;
         loanTermInYears = data.loanTermInYears;
-        monthlyRent = data.monthlyRent;
-        rentTax = data.rentTax;
+        monthlyIncome = data.monthlyIncome;
+        incomeTax = data.incomeTax;
         maintenanceCost = data.maintenanceCost;
+        propertyValueIncrease = data.propertyValueIncrease;
         
         // Generate cumulative data
         updateGraph();
-
+        
         // Log arrays after the updateGraph function
         console.log('filterAndRefreshGraph: cumulativeRentData:', cumulativeRentData);
         console.log('filterAndRefreshGraph: cumulativeInterestData:', cumulativeInterestData);
@@ -339,9 +348,9 @@ document.getElementById('update-button').addEventListener('click', filterAndRefr
 
 function updateGraph(){
     // Calculations
-    const loanAmount = purchasePrice * loanToValue;
-    const specificYears = [0, 1, 2, 3, 4, 5, 10, 15, 20, loanTermInYears];
-    const amortizationSchedule = generateAmortizationSchedule(loanAmount, annualInterestRate, loanTermInYears);
+    let loanAmount = purchasePrice * loanToValue;
+    let specificYears = [0, 1, 2, 3, 4, 5, 10, 15, 20, loanTermInYears];
+    let amortizationSchedule = generateAmortizationSchedule(loanAmount, annualInterestRate, loanTermInYears);
 
     cumulativePrincipalData = [0];
     for (let i = 1; i <= loanTermInYears; i++) {
@@ -362,13 +371,13 @@ function updateGraph(){
     cumulativeRentData = [0];
     for (let i = 1; i <= loanTermInYears; i++) {
         if (specificYears.includes(i)) {
-            cumulativeRentData.push(calculateCumulativeRent(monthlyRent, i));
+            cumulativeRentData.push(calculateCumulativeRent(monthlyIncome, i));
         }
     }
 
     propertyValueData = [purchasePrice];
     for (let i = 2; i <= loanTermInYears; i++) {
-        propertyValueData.push(purchasePrice);
+        propertyValueData.push(purchasePrice*(1+(propertyValueIncrease/100))^i);
     }
 
     OutstandingMortgageData = [loanAmount];
@@ -382,16 +391,16 @@ function updateGraph(){
     returnData = [0]; 
     for (let i = 1; i <= loanTermInYears; i++) {
         if (specificYears.includes(i)) {
-            const cumulativePrincipal = getCumulativePrincipalPayment(amortizationSchedule, i);
-            const cumulativeInterest = getCumulativeInterestPayment(amortizationSchedule, i);
-            const cumulativeRent = calculateCumulativeRent(monthlyRent, i);
+            let cumulativePrincipal = getCumulativePrincipalPayment(amortizationSchedule, i);
+            let cumulativeInterest = getCumulativeInterestPayment(amortizationSchedule, i);
+            let cumulativeRent = calculateCumulativeRent(monthlyIncome, i);
 
             // Calculate the current value (property value + cumulative rent)
-            const currentValue = parseFloat(cumulativePrincipal[i]?.cumulativePrincipal || 0) + ((cumulativeRent * (1-maintenanceCost)) * (1-rentTax)) - parseFloat(cumulativeInterest[i]?.cumulativeInterest || 0);
+            let currentValue = parseFloat(cumulativePrincipal[i]?.cumulativePrincipal || 0) + ((cumulativeRent * (1-(maintenanceCost/100))) * (1-(incomeTax/100))) - parseFloat(cumulativeInterest[i]?.cumulativeInterest || 0);
 
             // Calculate the return on investment (ROI)
-            const initialInvestment = purchasePrice * (1-loanToValue);
-            const returnOnInvestment = (currentValue / initialInvestment) * 100;
+            let initialInvestment = purchasePrice * (1-loanToValue) + purchasePrice * (propertyTax/100);
+            let returnOnInvestment = (currentValue / initialInvestment) * 100;
 
             returnData.push(returnOnInvestment.toFixed(2));
         }

@@ -281,12 +281,14 @@ def startGraph():
     ## Create dictionary
     start_graph_dict = {
         "purchasePrice": 200000,
+        "propertyTax": 5,
         "loanToValue" : 0.7,
-        "annualInterestRate": 3.5,
-        "loanTermInYears" : 15,
-        "monthlyRent": 1000,
-        "rentTax"  : 0.15,
-        "maintenanceCost" : 0.1
+        "annualInterestRate": 4,
+        "loanTermInYears" : 25,
+        "monthlyIncome": 1000,
+        "incomeTax"  : 15,
+        "maintenanceCost" : 10,
+        "propertyValueIncrease": 2
     }
     
     return jsonify(start_graph_dict)
@@ -294,24 +296,34 @@ def startGraph():
 @app.route('/updateGraph', methods=['POST'])
 def updateGraph():
 
+    paid_purchase_price_input = float(request.form['paid-purchase-price'])
+    property_tax_input = float(request.form['property-tax'])
     ltv_input = float(request.form['ltv'])
     mortgage_rate_input = float(request.form['mortgage-rate'])
     loan_term_input = float(request.form['mortgage-tenor'])
-    taxes_input = float(request.form['taxes'])
+    monthly_income_input = float(request.form['monthly-income'])
+    income_tax_input = float(request.form['income-tax'])
     maintenance_input = float(request.form['maintenance'])
+    property_value_increase_input = float(request.form['property-value-increase'])
 
     ## Create dictionary
     update_graph_dict = {
-        "purchasePrice": 500000,
+        "purchasePrice": paid_purchase_price_input,
+        "propertyTax": property_tax_input,
         "loanToValue" : ltv_input,
         "annualInterestRate": mortgage_rate_input,
         "loanTermInYears" : loan_term_input,
-        "monthlyRent": 2000,
-        "rentTax"  : taxes_input,
-        "maintenanceCost" : maintenance_input
+        "monthlyIncome": monthly_income_input,
+        "incomeTax"  : income_tax_input,
+        "maintenanceCost" : maintenance_input,
+        "propertyValueIncrease": property_value_increase_input
     }
     
     return jsonify(update_graph_dict)
+
+@app.route('/amortizationTable')
+def amortizationTable():
+    return render_template('amortizationTable.html')
 
 # start the flask server
 if __name__ == '__main__':

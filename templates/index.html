@@ -30,16 +30,17 @@
         }
         .horizontal-container{
             display: flex;
+            flex: 1;
         }
         .horizontal-search-block{
-            flex: 1;
+            flex: 2;
             border: 1px solid #160101;
             padding: 10px;
             margin: 5px;
             background-color: #e9e5e5;
             font-family: 'Times New Roman', Times, serif;
             font-style: normal;
-            color: #69d469;
+            color: #0a0a0a;
             font-size: 12px;
         }
         .horizontal-search-block h3{
@@ -53,9 +54,24 @@
             font-style: normal;
             color: #101110;
             font-size: 15px;
+            display: block;
+            margin-bottom: 0px;
+        }
+        .value-select-field {
+            width: 50%;
         }
         .value-input-field {
-            width: 77%;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        .property-info h3 {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #0f0f0f;
+            font-size: 15px;
+        }
+        .horizontal-property-info-block{
+            flex: 1;
         }
         .green-button {
             background-color: #4CAF50;
@@ -71,43 +87,43 @@
             padding: 10px;
             margin: 5px;
         }
-        .horizontal-property-block{
-            flex: 1;
-            border: 1px solid #160101;
-            padding: 10px;
-            margin: 5px;
-        }
-        .horizontal-return-graph-block{
-            flex: 1;
-            border: 1px solid #160101;
-            padding: 10px;
-            margin: 5px;
-        }
         .map {
             width: 100%;
             max-width: 100%;
             height: 100%;
         }
-        .property-info {
+        .horizontal-funding-block{
+            flex: 2;
+            border: 1px solid #160101;
+            align-items: center;
+            padding: 10px;
+            margin: 5px;
+            margin-bottom: 5px;
+            background-color: #e9e5e5;
             font-family: 'Times New Roman', Times, serif;
             font-style: normal;
-            color: rgb(14, 13, 13);;
-            font-size: 15px;
+            color: #0a0a0a;
+            font-size: 12px;
         }
-        .property-info h2 {
+        .horizontal-funding-block h3{
             font-family: 'Times New Roman', Times, serif;
             font-style: normal;
-            color: #4CAF50;
+            color: #101110;
             font-size: 20px;
         }
-        .property-info h3 {
-            font-family: 'Times New Roman', Times, serif;
-            font-style: normal;
-            color: #0f0f0f;
-            font-size: 15px;
+        .horizontal-funding-block label {
+            display: block;
+            margin-bottom: 1px;
         }
-        .horizontal-property-info-block{
-            flex: 1;
+        .horizontal-return-graph-block{
+            flex: 4;
+            border: 1px solid #160101;
+            padding: 10px;
+            margin: 5px;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            overflow: hidden;
         }
         .horizontal-return-graph-block h2 {
             font-family: 'Times New Roman', Times, serif;
@@ -115,8 +131,41 @@
             color: #4CAF50;
             font-size: 20px;
         }
+        .chart-container {
+            flex: 1;
+            overflow: auto;
+        }
         .chart {
-            width: 20%;
+            width: 80%; 
+            max-width: 100%; 
+            height: auto; 
+            display: block; 
+        }
+        .table {
+            width: 100%;
+            max-width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th {
+            background-color: rgb(105, 164, 217);
+            border: 1px solid #101014;
+            padding: 8px;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            font-size: 15px;
+            text-align: left;
+        }
+        .table td {
+            border: 1px solid #0c0b0b;
+            padding: 8px;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            font-size: 12px;
+            text-align: left;
+        }
+        .table tr:nth-child(even) {
+            background-color: rgb(222, 235, 247);
         }
         .horizontal-link-block{
             flex: 1;
@@ -137,7 +186,7 @@
             <form id="filter-form">
                 <h3>Define Search</h3>
                 <label for="min-price"> Minimum Purchase Price</label>
-                <select name="min-price" id="min-price" class="value-input-field">
+                <select name="min-price" id="min-price" class="value-select-field">
                     <option value="0">EUR 0</option>
                     <option value="50000">EUR 50,000</option>
                     <option value="100000">EUR 100,000</option>
@@ -146,7 +195,7 @@
                 </select>
                 <br></br>
                 <label for="max-price"> Maximum Purchase Price</label>
-                <select name="max-price" id="max-price" class="value-input-field">
+                <select name="max-price" id="max-price" class="value-select-field">
                     <option value="50000">EUR 50,000</option>
                     <option value="100000">EUR 100,000</option>
                     <option value="150000">EUR 150,000</option>
@@ -154,8 +203,8 @@
                     <option value="250000">EUR 250,000</option>
                 </select>
                 <br></br>
-                <label for="municipality"><i class="fa fa-map-marker"></i> Municipality</label>
-                <select name="municipality" id="municipality" class="value-input-field">
+                <label for="municipality"> Municipality</label>
+                <select name="municipality" id="municipality" class="value-select-field">
                     <option value="Estepona">Estepona</option>
                     <option value="Málaga">Málaga</option>
                     <option value="Marbella">Marbella</option>
@@ -164,52 +213,11 @@
                 </select>
                 <br></br>
                 <button type="button" id="filter-button" class="green-button">Filter Overview</button>
-                <br></br>
-                <h3>Define Funding</h3>
-                <label for="ltv"> Loan-to-Value</label>
-                <select name="ltv" id="ltv" class="value-input-field">
-                    <option value="0.5">50%</option>
-                    <option value="0.6">60%</option>
-                    <option value="0.7">70%</option>
-                    <option value="0.8">80%</option>
-                    <option value="0.9" selected>90%</option>
-                </select>
-                <br></br>
-                <label for="mortgage-rate"> Mortgage Rate (%)</label>
-                <input name="mortgage-rate" type="text" id="mortgage-rate" class="input-field" value="4">
-                <br></br>
-                <label for="mortgage-tenor"> Mortgage Tenor</label>
-                <select name="mortgage-tenor" id="mortgage-tenor" class="value-input-field">
-                    <option value="10">10 years</option>
-                    <option value="15">15 years</option>
-                    <option value="20">20 years</option>
-                    <option value="25" selected>25 years</option>
-                    <option value="30">30 years</option>
-                </select>
-                <br></br>
-                <h3>Define Rent Income</h3>
-                <label for="taxes"> Taxes (%)</label>
-                <input name="taxes" type="text" id="taxes" class="input-field" value="15">
-                <br></br>
-                <label for="maintenance"> Maintenance (% of income)</label>
-                <input name="maintenance" type="text" id="maintenance" class="input-field" value="10">
-                <br></br>
-                <button type="button" id="update-button" class="green-button">Update Graphs</button> 
             </form>
-        </div>
-
-        <div class="horizontal-map-block">
-            <div id="map" class="map"></div>
-            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-            <script src="../static/js/propertyMap.js"></script>
-        </div>
-    </div>
-    
-    <div class="horizontal-container">
-        <div class="horizontal-property-block">
-            <div class="property-info" id="selected-property-info">
-                <h2>Property Information</h2>
-                    <h3>Economics</h3>
+            
+            <div class="property-info" id="selected-property-info">    
+                <h3>Property Information</h3>
+                    <h4>Economics</h4>
                         <div class="horizontal-container">
                             <div class="horizontal-property-info-block">
                                 <p id="price">Price: €</p>
@@ -218,16 +226,16 @@
                                 <p id="predicted-rent">Predicted Monthly Rent (LT): €</p>
                             </div>
                         </div>
-                    <h3>Description</h3>
+                    <h4>Description</h4>
                         <div class="horizontal-container">
                             <p id="description"></p>
                         </div>
                         <div class="horizontal-container">
                             <div class="horizontal-property-info-block">
-                              <p id="property-type">Property Type:</p>
+                                <p id="property-type">Property Type:</p>
                             </div>
                             <div class="horizontal-property-info-block">
-                              <p id="size">Size:</p>
+                                <p id="size">Size:</p>
                             </div>
                         </div>
                         <div class="horizontal-container">
@@ -261,22 +269,80 @@
                         </div>  
             </div>
         </div>
-        <div class="horizontal-return-graph-block"> 
-            <h2>Expected Return</h2>
-            <canvas id="returnChart" class="chart"></canvas>
-            <canvas id="balanceSheetChart" class="chart"></canvas>
-            <script src="../static/js/returnGraph.js"></script>
+
+        <div class="horizontal-map-block">
+            <div id="map" class="map"></div>
+            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+            <script src="../static/js/propertyMap.js"></script>
         </div>
     </div>
+    
     <div class="horizontal-container">
-        <div class="horizontal-link-block">
-            <a href="/enrichedPropertyData">All property information</a>
+        <div class="horizontal-funding-block">
+            <form id="funding-form">
+                <h3>Define Funding</h3>
+                    <label for="paid-purchase-price"> Paid Purchase Price</label>
+                    <input name="paid-purchase-price" type="text" id="paid-purchase-price" class="value-input-field" value="200000">
+                    <br></br>
+                    <label for="property-tax"> Property Tax (%)</label>
+                    <input name="property-tax" type="text" id="property-tax" class="value-input-field" value="5">
+                    <br></br>
+                    <label for="ltv"> Loan-to-Value</label>
+                    <select name="ltv" id="ltv" class="value-select-field">
+                        <option value="0.5">50%</option>
+                        <option value="0.6">60%</option>
+                        <option value="0.7" selected>70%</option>
+                        <option value="0.8">80%</option>
+                        <option value="0.9" selected>90%</option>
+                    </select>
+                    <br></br>
+                    <label for="mortgage-rate"> Mortgage Rate (%)</label>
+                    <input name="mortgage-rate" type="text" id="mortgage-rate" class="value-input-field" value="4">
+                    <br></br>
+                    <label for="mortgage-tenor"> Mortgage Tenor</label>
+                    <select name="mortgage-tenor" id="mortgage-tenor" class="value-select-field">
+                        <option value="10">10 years</option>
+                        <option value="15">15 years</option>
+                        <option value="20">20 years</option>
+                        <option value="25" selected>25 years</option>
+                        <option value="30">30 years</option>
+                    </select>
+                <h3>Define Income</h3>
+                    <label for="monthly-income"> Monthly Income</label>
+                    <input name="monthly-income" type="text" id="monthly-income" class="value-input-field" value="1000">
+                    <br></br>
+                    <label for="income-taxes"> Rent taxes (%)</label>
+                    <input name="income-taxes" type="text" id="income-taxes" class="value-input-field" value="15">
+                    <br></br>
+                    <label for="maintenance"> Maintenance (% of income)</label>
+                    <input name="maintenance" type="text" id="maintenance" class="value-input-field" value="10">
+                    <br></br>
+                    <label for="property-value-increase"> Property Value Increase (% annual)</label>
+                    <input name="property-value-increase" type="text" id="property-value-increase" class="value-input-field" value="2">
+                    <br></br>
+                <button type="button" id="update-button" class="green-button">Update Graphs</button> 
+            </form>     
         </div>
+        <div class="horizontal-return-graph-block"> 
+            <div class="chart-container">
+                <h2>Expected Return</h2>
+                <canvas id="returnChart" class="chart"></canvas>
+                <h2>Loan-to-Value</h2>
+                <canvas id="balanceSheetChart" class="chart"></canvas>
+                <script src="../static/js/returnGraph.js"></script>
+            </div>
+        </div>
+        
+    </div>
+    <div class="horizontal-container">
         <div class="horizontal-link-block">
             <a href="/comparisonPropertyData">All comp information</a>
         </div>
         <div class="horizontal-link-block">
             <a href="/historicalPurchaseData">Historical data</a>
+        </div>
+        <div class="horizontal-link-block">
+            <a href="/amortizationTable">Amortization Schedule</a>
         </div>
     </div>
 </body>
