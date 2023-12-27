@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>Buy-to-Let Tracker</title>
+
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            overflow: auto;
+        }
+        .header {
+            background-color: #2f2f31; 
+            color: #faf1f1;
+            height: 1cm; 
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+        }
+        .horizontal-container{
+            display: flex;
+            flex: 1;
+        }
+        .horizontal-search-block{
+            flex: 2;
+            border: 1px solid #160101;
+            padding: 10px;
+            margin: 5px;
+            background-color: #e9e5e5;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #0a0a0a;
+            font-size: 12px;
+        }
+        .horizontal-search-block h2{
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #4CAF50;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h2>Property Tracker</h2>
+    </div>
+    
+    <div class="horizontal-container">
+        <div class="horizontal-search-block">
+            <h2>Historical Overview Property Value</h2>
+            <canvas id="balanceSheetChart" class="chart"></canvas>
+            <script src="../static/js/historicalGraph.js"></script>
+        </div>
+    </div>
+
+</body>
+</html>
