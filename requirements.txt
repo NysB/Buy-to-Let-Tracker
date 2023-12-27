@@ -1,9 +1,0 @@
-flask
-flask-cors
-gunicorn
-sqlalchemy
-numpy
-pandas
-datetime
-pyodbc
-pathlib

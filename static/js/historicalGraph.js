@@ -1,46 +1,14 @@
-// Sample data
-const data = [
-    { group: 'Group A', date: '2023-01-01', value: 10 },
-    { group: 'Group A', date: '2023-01-02', value: 15 },
-    { group: 'Group A', date: '2023-01-03', value: 20 },
-    { group: 'Group A', date: '2023-01-04', value: 25 },
-    { group: 'Group A', date: '2023-01-05', value: 30 },
-    { group: 'Group B', date: '2023-01-01', value: 8 },
-    { group: 'Group B', date: '2023-01-02', value: 12 },
-    { group: 'Group B', date: '2023-01-03', value: 18 },
-    { group: 'Group B', date: '2023-01-04', value: 22 },
-    { group: 'Group B', date: '2023-01-05', value: 28 },
-];
 
-// Extract unique dates and groups
-const uniqueDates = [...new Set(data.map(item => item.date))];
-const uniqueGroups = [...new Set(data.map(item => item.group))];
-
-// Define custom background colors for each date
-const backgroundColors = ['#FF5733', '#33FF57', '#5733FF', '#FFFF33', '#33FFFF'];
-
-// Prepare data for Chart.js
-const chartData = {
-    labels: uniqueGroups, // Reverse the order to show groups on X-axis
-    datasets: uniqueDates.map((date, index) => ({
-        label: date,
-        data: uniqueGroups.map(group => {
-            const item = data.find(entry => entry.group === group && entry.date === date);
-            return item ? item.value : 0;
-        }),
-        backgroundColor: backgroundColors[index], // Use custom background color
-        borderColor: 'rgba(0, 0, 0, 1)',
-        borderWidth: 1,
-    })),
-};
+// Declare the data variable
+let data;
 
 // Get the canvas element
 const ctx = document.getElementById('myChart').getContext('2d');
 
-// Create the bar chart
+// Create the initial bar chart
 const myChart = new Chart(ctx, {
     type: 'bar',
-    data: chartData,
+    data: {},  // Set initial data as an empty object
     options: {
         scales: {
             x: {
@@ -52,3 +20,71 @@ const myChart = new Chart(ctx, {
         },
     },
 });
+
+// Function to update the chart based on selected city
+function updateChart() {
+    // Move this line inside the function
+    const uniqueDates = [...new Set(data.map(item => item.date))];
+
+    console.log('updateChart: uniqueDates:', uniqueDates);
+
+    // Extract unique groups and cities
+    const uniqueGroups = ['zeroBedroom', 'oneBedroom', 'twoBedroom', 'threeBedroom', 'fourBedroom', 'fiveBedroom', 'moreThanFiveBedroom', 'twentyFive', 'fifty', 'seventyFive', 'hundred', 'hundredFifty', 'twoHundred', 'moreThanTwoHundred'];
+    const uniqueCities = [...new Set(data.map(item => item.city))];
+
+    console.log('updateChart: uniqueGroups:', uniqueGroups);
+    console.log('updateChart: uniqueCities:', uniqueCities);
+
+    // Define custom background colors for each date
+    const backgroundColors = ['#FF5733', '#33FF57', '#5733FF', '#FFFF33', '#33FFFF'];
+
+    // Prepare data for Chart.js
+    const chartData = {
+        labels: uniqueGroups,
+        datasets: uniqueDates.map((date, index) => ({
+            label: date,
+            data: uniqueGroups.map(group => {
+                // Filter data for the specific group, city, and date
+                const groupData = data.filter(entry => entry.city === group);
+                const cityData = groupData.filter(entry => new Date(entry.date).getTime() === new Date(date).getTime());
+                // Assuming you want to sum the values for the specified city and group on that date
+                const sum = cityData.reduce((accumulator, entry) => accumulator + entry.value, 0);
+                return sum;
+            }),
+            backgroundColor: backgroundColors[index % backgroundColors.length],
+            borderColor: 'rgba(0, 0, 0, 1)',
+            borderWidth: 1,
+        })),
+    };
+
+    // Update the existing chart data
+    myChart.data = chartData;
+
+    console.log('updateChart: chartData:', chartData);
+
+    // Update the chart
+    myChart.update();
+}
+
+// Function to fetch data from the server and create the graphs
+function historicalGraph() {
+    fetch('/historicalRentData')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(responseData => {
+            // Assign the retrieved data to the data variable
+            data = responseData;
+
+            // Call the updateChart function with the fetched data
+            updateChart();
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+historicalGraph();

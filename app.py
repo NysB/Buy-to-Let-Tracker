@@ -12,14 +12,7 @@ from flask_cors import CORS, cross_origin
 # Database Setup
 ## Retrieve keys
 
-try:
-    from Scripts.api_keys import server_name, database_name, user_name, password
-except:
-    import os
-    server_name = os.environ.get('server_name')
-    database_name = os.environ.get('database_name')
-    user_name = os.environ.get('user_name')
-    password = os.environ.get('password')
+from Scripts.api_keys import server_name, database_name, user_name, password
 
 ## Create connection string
 
