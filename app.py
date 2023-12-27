@@ -12,11 +12,18 @@ from flask_cors import CORS, cross_origin
 # Database Setup
 ## Retrieve keys
 
-from Scripts.api_keys import server_name, database_name, username, password
+try:
+    from Scripts.api_keys import server_name, database_name, user_name, password
+except:
+    import os
+    server_name = os.environ.get('server_name')
+    database_name = os.environ.get('database_name')
+    user_name = os.environ.get('user_name')
+    password = os.environ.get('password')
 
 ## Create connection string
 
-connection_string = "DRIVER={ODBC Driver 18 for SQL Server};SERVER={"+ server_name + "};DATABASE={" + database_name + "};UID={" + username + "};PWD={" + password + "}"
+connection_string = "DRIVER={ODBC Driver 18 for SQL Server};SERVER={"+ server_name + "};DATABASE={" + database_name + "};UID={" + user_name + "};PWD={" + password + "}"
 
 ## Try to establish a connection
 
