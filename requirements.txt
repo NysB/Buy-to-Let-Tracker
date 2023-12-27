@@ -7,4 +7,3 @@ pandas
 datetime
 pyodbc
 pathlib
-os
