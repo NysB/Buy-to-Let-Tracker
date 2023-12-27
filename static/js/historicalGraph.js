@@ -1,55 +1,41 @@
-
 // Function to update the chart based on selected city
 function updateChart() {
     const selectedCity = document.getElementById('citySelect').value;
     const cityData = data.filter(item => item.city === selectedCity);
-
+  
     // Clear previous chart
-    document.getElementById('chart').innerHTML = '';
-
+    const chartContainer = document.getElementById('chart');
+    chartContainer.innerHTML = '';
+  
     // Create bars for each attribute
     cityData.forEach(item => {
       const bar = document.createElement('div');
       bar.className = 'bar';
-      bar.style.height = `${item.fifty / 1000}px`; // Adjust height as needed
+      // Adjust height as needed (dividing by 1000 might be too much, consider adjusting)
+      bar.style.height = `${item.fifty / 1000}px`;
       bar.innerText = `${item.attribute} - ${item.fifty.toFixed(2)}`;
-      document.getElementById('chart').appendChild(bar);
+      chartContainer.appendChild(bar);
     });
-}
-
-
-// Function to fetch data from the server and create the graphs
-
-function historicalGraph() {
+  }
+  
+  // Function to fetch data from the server and create the graphs
+  function historicalGraph() {
     fetch('/historicalPurchaseData')
-        .then(response => response.json())
-        .then(data => {
-
-
-            // Generate cumulative data
-            
-            updateChart();
-
-
-            // Log arrays after the updateGraph function
-
-            console.log('initializeGraph: cumulativeRentData:', cumulativeRentData);
-            console.log('initializeGraph: cumulativeInterestData:', cumulativeInterestData);
-            console.log('initializeGraph: cumulativePrincipalData:', cumulativePrincipalData);
-            console.log('initializeGraph: returnData:', returnData);
-            console.log('initializeGraph: propertyValueData:', propertyValueData);
-            console.log('initializeGraph: outstandingMortgageData:', outstandingMortgageData);
-
-
-            // update Charts
-
-            returnChart.update();
-            balanceSheetChart.update();
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-}
-
-historicalGraph();
-
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Call the updateChart function with the fetched data
+        updateChart(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }
+  
+  // Call the historicalGraph function
+  historicalGraph();
+  
