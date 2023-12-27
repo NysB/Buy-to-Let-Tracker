@@ -328,6 +328,10 @@ def updateGraph():
     
     return jsonify(update_graph_dict)
 
+@app.route('/historicalGraph')
+def historicalGraph():
+    return render_template('historical_graph.html')
+
 # start the flask server
 if __name__ == '__main__':
     app.run(debug=True)
