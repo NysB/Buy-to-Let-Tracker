@@ -321,10 +321,6 @@ def updateGraph():
     
     return jsonify(update_graph_dict)
 
-@app.route('/amortizationTable')
-def amortizationTable():
-    return render_template('amortizationTable.html')
-
 # start the flask server
 if __name__ == '__main__':
     app.run(debug=True)

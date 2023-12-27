@@ -8,44 +8,29 @@ let monthlyIncome;
 let incomeTax;
 let maintenanceCost;
 let propertyValueIncrease;
+let propertyValueIncreaseInput;
 let initialInvestment;
 let cumulativeRentData = [];
 let cumulativeInterestData = [];
 let cumulativePrincipalData = [];
 let returnData = [];
 let propertyValueData = [];
-let OutstandingMortgageData = [];
-
-
-// Calculate Cumulative Rent Earned up to specified years
-
-function calculateCumulativeRent(monthlyIncome, years) {
-    let monthsInYear = 12;
-    let cumulativeRent = 0;
-
-    for (let year = 1; year <= years; year++) {
-        cumulativeRent += monthlyIncome * monthsInYear;
-    }
-
-    return cumulativeRent;
-}
+let outstandingMortgageData = []; // changed to camelCase for consistency
 
 
 // Calculate monthly mortgage payment
-
 function calculateMortgagePayment(loanAmount, annualInterestRate, loanTermInYears) {
     let monthlyInterestRate = (annualInterestRate / 12) / 100;
     let totalPayments = loanTermInYears * 12;
 
-    let monthlyPayment = (monthlyInterestRate * loanAmount * Math.pow(1 + monthlyInterestRate, totalPayments)) / (Math.pow(1 + monthlyInterestRate, totalPayments)-1);
+    let monthlyPayment = (monthlyInterestRate * loanAmount * Math.pow(1 + monthlyInterestRate, totalPayments)) / (Math.pow(1 + monthlyInterestRate, totalPayments) - 1);
 
     return monthlyPayment;
 }
 
-
 // Calculate amortization schedule
-
-function generateAmortizationSchedule(loanAmount, annualInterestRate, loanTermInYears) {
+function generateAmortizationSchedule(purchasePrice, propertyTax, loanToValue, annualInterestRate, loanTermInYears, monthlyIncomeInput, incomeTax, maintenanceCost, propertyValueIncreaseInput) {
+    let loanAmount = purchasePrice * loanToValue;
     let monthlyInterestRate = (annualInterestRate / 12) / 100;
     let totalPayments = loanTermInYears * 12;
 
@@ -54,95 +39,125 @@ function generateAmortizationSchedule(loanAmount, annualInterestRate, loanTermIn
     let remainingLoanBalance = loanAmount;
     let amortizationSchedule = [];
 
+    amortizationSchedule.push({
+        month: 0,
+        propertyValue: purchasePrice,
+        equity: purchasePrice * (1 - loanToValue),
+        payment: 0,
+        principal: 0,
+        interest: 0,
+        balance: remainingLoanBalance.toFixed(2),
+        monthlyIncome: 0,
+        monthlyNetIncome: 0,
+        cashPosition: -purchasePrice * (1 - loanToValue) - purchasePrice * (propertyTax / 100),
+        returnSinceInception: 0
+    });
+
     for (let month = 1; month <= totalPayments; month++) {
         let interestPayment = remainingLoanBalance * monthlyInterestRate;
         let principalPayment = monthlyPayment - interestPayment;
 
         remainingLoanBalance -= principalPayment;
 
+        let monthlyNetIncome = monthlyIncomeInput * (1 - (maintenanceCost / 100)) * (1 - (incomeTax / 100)) - monthlyPayment;
+        let currentPropertyValue = purchasePrice * Math.pow(1 + (propertyValueIncreaseInput / 12) / 100, month);
+        let currentEquity = currentPropertyValue - remainingLoanBalance;
+        let initialEquity = purchasePrice * (1 - loanToValue);
+        let initialCashPosition = -purchasePrice * (1 - loanToValue) - purchasePrice * (propertyTax / 100)
+        let previousCashPosition = amortizationSchedule[month - 1].cashPosition;
+        let currentCashPosition = previousCashPosition + monthlyNetIncome;
+        let currentReturnSinceInception = (currentEquity - initialEquity + currentCashPosition - initialCashPosition) / (-initialCashPosition)
+
         amortizationSchedule.push({
             month,
+            propertyValue: currentPropertyValue,
+            equity: currentEquity,
             payment: monthlyPayment.toFixed(2),
             principal: principalPayment.toFixed(2),
             interest: interestPayment.toFixed(2),
-            balance: remainingLoanBalance.toFixed(2)
+            balance: remainingLoanBalance.toFixed(2),
+            monthlyIncome: monthlyIncomeInput,
+            monthlyNetIncome: monthlyNetIncome,
+            cashPosition: currentCashPosition,
+            returnSinceInception: currentReturnSinceInception * 100
         });
     }
 
+    console.log('generateAmortizationSchedule: propertyValueIncrease:', propertyValueIncreaseInput);
     return amortizationSchedule;
 }
 
 
-// Calculate cumulative interest up to specified years
+// Calculate Cumulative Monthly Income
 
-function getCumulativeInterestPayment(schedule, years) {
-    let interestByYear = {};
-    let totalInterest = 0;
+function getCumulativeRent(amortizationSchedule, month) {
+    let cumulativeRent = 0;
 
-    for (let i = 0; i < schedule.length; i++) {
-        let year = Math.ceil(schedule[i].month / 12);
-
-        if (year > years) {
-            break;
-        }
-
-        totalInterest += parseFloat(schedule[i].interest);
-
-        interestByYear[year] = {
-            cumulativeInterest: totalInterest.toFixed(2),
-        };
+    for (let period = 0; period <= month && amortizationSchedule[period]; period++) {
+        cumulativeRent += parseFloat(amortizationSchedule[period].monthlyIncome);
     }
 
-    return interestByYear;
+    return cumulativeRent;
+}
+
+// Calculate cumulative interest
+
+function getCumulativeInterestPayment(amortizationSchedule, month) {
+    let cumulativeInterest = 0;
+
+    for (let period = 0; period <= month; period++) {
+        cumulativeInterest += parseFloat(amortizationSchedule[period].interest);
+    }
+
+    return cumulativeInterest;
 }
 
 
-// Calculate cumulative principal up to specified years
+// Calculate cumulative principal
 
-function getCumulativePrincipalPayment(schedule, years) {
-    let principalByYear = {};
-    let totalPrincipal = 0;
+function getCumulativePrincipalPayment(amortizationSchedule, month) {
+    let cumulativePrincipal = 0;
 
-    for (let i = 0; i < schedule.length; i++) {
-        let year = Math.ceil(schedule[i].month / 12);
-
-        if (year > years) {
-            break;
-        }
-
-        totalPrincipal += parseFloat(schedule[i].principal);
-
-        principalByYear[year] = {
-            cumulativePrincipal: totalPrincipal.toFixed(2)
-        };
+    for (let period = 0; period <= month; period++) {
+        cumulativePrincipal += parseFloat(amortizationSchedule[period].principal);
     }
 
-    return principalByYear;
+    return cumulativePrincipal;
 }
 
 
 // Calculate remaining loan balance
 
-function getRemainingLoanBalance(schedule, years) {
+function getRemainingLoanBalance(amortizationSchedule, month) {
     let remainingBalance = 0;
-
-    for (let i = 0; i < schedule.length; i++) {
-        let year = Math.ceil(schedule[i].month / 12);
-
-        if (year >= years) {
-            remainingBalance = parseFloat(schedule[i].balance);
-            break;
-        }
-    }
+    remainingBalance = parseFloat(amortizationSchedule[month].balance)
 
     return remainingBalance;
 }
 
 
-// Set up Return Chart
+// Calculate property value
 
+function getPropertyValue(amortizationSchedule, month) {
+    let propertyValue = 0;
+    propertyValue = parseFloat(amortizationSchedule[month].propertyValue)
+
+    return propertyValue;
+}
+
+
+// Calculate return
+
+function getReturnValue(amortizationSchedule, month) {
+    let returnValue = 0;
+    returnValue = parseFloat(amortizationSchedule[month].returnSinceInception)
+
+    return returnValue;
+}
+
+
+// Set up Return Chart
 const returnCtx = document.getElementById('returnChart').getContext('2d');
-console.log('returnCtx:', returnCtx);
 const returnChart = new Chart(returnCtx, {
     type: 'bar',
     data: {
@@ -196,9 +211,9 @@ const returnChart = new Chart(returnCtx, {
                 display: false,
             },
             logarithmic: {
-                type: 'logarithmic', 
-                position: 'right', 
-                id: 'logarithmic-axis', 
+                type: 'logarithmic',
+                position: 'right',
+                id: 'logarithmic-axis',
                 display: false,
             },
             x: {
@@ -209,9 +224,7 @@ const returnChart = new Chart(returnCtx, {
 });
 
 // Set up Balance Sheet Chart
-
 const balanceSheetCtx = document.getElementById('balanceSheetChart').getContext('2d');
-console.log('balanceSheetCtx:', balanceSheetCtx);
 const balanceSheetChart = new Chart(balanceSheetCtx, {
     type: 'bar',
     data: {
@@ -229,7 +242,7 @@ const balanceSheetChart = new Chart(balanceSheetCtx, {
                 backgroundColor: 'rgba(244, 177, 131, 1)',
                 borderColor: 'rgba(132, 60, 12, 1)',
                 borderWidth: 1,
-                data: OutstandingMortgageData,
+                data: outstandingMortgageData,
             },
         ],
     },
@@ -249,47 +262,141 @@ const balanceSheetChart = new Chart(balanceSheetCtx, {
 });
 
 
+// Function to create and display table
+
+function createTable(data, page = 1, rowsPerPage = 12) {
+    const tableContainer = document.getElementById('amortizationTableContainer');
+    const table = document.createElement('table');
+    table.classList.add('table');
+
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+
+    // Create table header
+
+    const headerRow = document.createElement('tr');
+    Object.keys(data[0]).forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+
+    // Create table rows
+
+    const currentPageData = data.slice(startIndex, endIndex);
+    currentPageData.forEach(rowData => {
+        const row = document.createElement('tr');
+        Object.values(rowData).forEach(columnText => {
+            const td = document.createElement('td');
+            td.textContent = Number(columnText).toLocaleString(undefined, { maximumFractionDigits: 2 });
+            row.appendChild(td);
+        });
+        table.appendChild(row);
+    });
+
+
+    // Clear previous content and append the table
+
+    tableContainer.innerHTML = '';
+    tableContainer.appendChild(table);
+
+
+    // Add navigation buttons
+
+    const navigationContainer = document.createElement('div');
+    navigationContainer.classList.add('pagination');
+
+
+    // First button
+
+    const firstButton = document.createElement('button');
+    firstButton.textContent = 'First';
+    firstButton.addEventListener('click', () => {
+        createTable(data, 1, rowsPerPage);
+    });
+    navigationContainer.appendChild(firstButton);
+
+
+    // Previous button
+
+    const prevButton = document.createElement('button');
+    prevButton.textContent = 'Previous';
+    prevButton.addEventListener('click', () => {
+        if (page > 1) {
+            createTable(data, page - 1, rowsPerPage);
+        }
+    });
+    navigationContainer.appendChild(prevButton);
+
+
+    // Next button
+
+    const nextButton = document.createElement('button');
+    nextButton.textContent = 'Next';
+    nextButton.addEventListener('click', () => {
+        if (endIndex < data.length) {
+            createTable(data, page + 1, rowsPerPage);
+        }
+    });
+    navigationContainer.appendChild(nextButton);
+
+    tableContainer.appendChild(navigationContainer);
+}
+
+
 // Function to fetch data from the server and initialize the graphs
+
 function initializeGraph() {
     fetch('/startGraph')
-      .then(response => response.json())
-      .then(data => {
-        
-        // Assign values from the fetched data
-        purchasePrice = data.purchasePrice;
-        propertyTax = data.propertyTax;
-        loanToValue = data.loanToValue;
-        annualInterestRate = data.annualInterestRate;
-        loanTermInYears = data.loanTermInYears;
-        monthlyIncome = data.monthlyIncome;
-        incomeTax = data.incomeTax;
-        maintenanceCost = data.maintenanceCost;
-        propertyValueIncrease = data.propertyValueIncrease;
-        
-        // Generate cumulative data
-        updateGraph();
+        .then(response => response.json())
+        .then(data => {
 
-        // Log arrays after the updateGraph function
-        console.log('initializeGraph: cumulativeRentData:', cumulativeRentData);
-        console.log('initializeGraph: cumulativeInterestData:', cumulativeInterestData);
-        console.log('initializeGraph: cumulativePrincipalData:', cumulativePrincipalData);
-        console.log('initializeGraph: returnData:', returnData);
-        console.log('initializeGraph: propertyValueData:', propertyValueData);
-        console.log('initializeGraph: OutstandingMortgageData:', OutstandingMortgageData);
-        
-        // update Charts
-        returnChart.update();
-        balanceSheetChart.update();
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  }
+            // Assign values from the fetched data
 
+            purchasePrice = data.purchasePrice;
+            propertyTax = data.propertyTax;
+            loanToValue = data.loanToValue;
+            annualInterestRate = data.annualInterestRate;
+            loanTermInYears = data.loanTermInYears;
+            monthlyIncomeInput = data.monthlyIncome;
+            incomeTax = data.incomeTax;
+            maintenanceCost = data.maintenanceCost;
+            propertyValueIncreaseInput = data.propertyValueIncrease;
+
+
+            // Generate cumulative data
+            
+            updateGraph();
+
+
+            // Log arrays after the updateGraph function
+
+            console.log('initializeGraph: cumulativeRentData:', cumulativeRentData);
+            console.log('initializeGraph: cumulativeInterestData:', cumulativeInterestData);
+            console.log('initializeGraph: cumulativePrincipalData:', cumulativePrincipalData);
+            console.log('initializeGraph: returnData:', returnData);
+            console.log('initializeGraph: propertyValueData:', propertyValueData);
+            console.log('initializeGraph: outstandingMortgageData:', outstandingMortgageData);
+
+
+            // update Charts
+
+            returnChart.update();
+            balanceSheetChart.update();
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
 
 initializeGraph();
 
+
 // Function to fetch filtered data from the server and update the map with it
+
 function filterAndRefreshGraph() {
     let paidPurchasePrice = document.getElementById('paid-purchase-price').value;
     let propertyTax = document.getElementById('property-tax').value;
@@ -311,29 +418,39 @@ function filterAndRefreshGraph() {
       .then(response => response.json())
       .then(data => {
         
+
         // Assign values from the fetched data
+
         purchasePrice = data.purchasePrice;
         propertyTax = data.propertyTax;
         loanToValue = data.loanToValue;
         annualInterestRate = data.annualInterestRate;
         loanTermInYears = data.loanTermInYears;
-        monthlyIncome = data.monthlyIncome;
+        monthlyIncomeInput = data.monthlyIncome;
         incomeTax = data.incomeTax;
         maintenanceCost = data.maintenanceCost;
-        propertyValueIncrease = data.propertyValueIncrease;
-        
+        propertyValueIncreaseInput = data.propertyValueIncrease;
+
+        console.log('filterAndRefreshGraph: propertyValueIncreaseInput:', propertyValueIncreaseInput);
+
+
         // Generate cumulative data
+
         updateGraph();
         
+
         // Log arrays after the updateGraph function
+
         console.log('filterAndRefreshGraph: cumulativeRentData:', cumulativeRentData);
         console.log('filterAndRefreshGraph: cumulativeInterestData:', cumulativeInterestData);
         console.log('filterAndRefreshGraph: cumulativePrincipalData:', cumulativePrincipalData);
         console.log('filterAndRefreshGraph: returnData:', returnData);
         console.log('filterAndRefreshGraph: propertyValueData:', propertyValueData);
-        console.log('filterAndRefreshGraph: OutstandingMortgageData:', OutstandingMortgageData);
+        console.log('filterAndRefreshGraph: outstandingMortgageData:', outstandingMortgageData);
         
+
         // update Charts
+
         returnChart.update();
         balanceSheetChart.update();
       })
@@ -342,82 +459,116 @@ function filterAndRefreshGraph() {
       });
   }
 
+
 // Attach the filterAndRefreshMap function to the Filter button click event
+
 document.getElementById('update-button').addEventListener('click', filterAndRefreshGraph);
 
 
+// Function to update graph
+
 function updateGraph(){
+    
     // Calculations
     let loanAmount = purchasePrice * loanToValue;
-    let specificYears = [0, 1, 2, 3, 4, 5, 10, 15, 20, loanTermInYears];
-    let amortizationSchedule = generateAmortizationSchedule(loanAmount, annualInterestRate, loanTermInYears);
+    let specificYears = [0, 1, 2, 3, 4, 5, 10, loanTermInYears];
+    let amortizationSchedule = generateAmortizationSchedule(
+        purchasePrice,
+        propertyTax,
+        loanToValue,
+        annualInterestRate,
+        loanTermInYears,
+        monthlyIncomeInput,
+        incomeTax,
+        maintenanceCost,
+        propertyValueIncreaseInput
+    );
 
-    cumulativePrincipalData = [0];
-    for (let i = 1; i <= loanTermInYears; i++) {
-        if (specificYears.includes(i)) {
-            const cumulativePrincipal = getCumulativePrincipalPayment(amortizationSchedule, i);
-            cumulativePrincipalData.push(parseFloat(cumulativePrincipal[i]?.cumulativePrincipal || 0));
+    cumulativePrincipalData = [];
+    for (let year of specificYears) {
+        let month = year * 12;
+    
+        if (month >= 0 && month <= loanTermInYears * 12) {
+            cumulativePrincipalData.push(getCumulativePrincipalPayment(amortizationSchedule, month));
         }
     }
 
-    cumulativeInterestData = [0];
-    for (let i = 1; i <= loanTermInYears; i++) {
-        if (specificYears.includes(i)) {
-            const cumulativeInterest = getCumulativeInterestPayment(amortizationSchedule, i);
-            cumulativeInterestData.push(parseFloat(cumulativeInterest[i]?.cumulativeInterest || 0));
+    cumulativeInterestData = [];
+    for (let year of specificYears) {
+        let month = year * 12;
+    
+        if (month >= 0 && month <= loanTermInYears * 12) {
+            cumulativeInterestData.push(getCumulativeInterestPayment(amortizationSchedule, month));
         }
     }
 
-    cumulativeRentData = [0];
-    for (let i = 1; i <= loanTermInYears; i++) {
-        if (specificYears.includes(i)) {
-            cumulativeRentData.push(calculateCumulativeRent(monthlyIncome, i));
+    cumulativeRentData = [];
+    for (let year of specificYears) {
+        let month = year * 12;
+    
+        if (month >= 0 && month <= loanTermInYears * 12) {
+            cumulativeRentData.push(getCumulativeRent(amortizationSchedule, month));
         }
     }
 
-    propertyValueData = [purchasePrice];
-    for (let i = 2; i <= loanTermInYears; i++) {
-        propertyValueData.push(purchasePrice*(1+(propertyValueIncrease/100))^i);
-    }
-
-    OutstandingMortgageData = [loanAmount];
-    for (let i = 2; i <= loanTermInYears; i++) {
-        if (specificYears.includes(i)) {
-            const remainingBalance = getRemainingLoanBalance(amortizationSchedule, i);
-            OutstandingMortgageData.push(parseFloat(remainingBalance || 0));
+    propertyValueData = [];
+    for (let year of specificYears) {
+        let month = year * 12;
+    
+        if (month >= 0 && month <= loanTermInYears * 12) {
+            propertyValueData.push(getPropertyValue(amortizationSchedule, month));
         }
     }
 
-    returnData = [0]; 
-    for (let i = 1; i <= loanTermInYears; i++) {
-        if (specificYears.includes(i)) {
-            let cumulativePrincipal = getCumulativePrincipalPayment(amortizationSchedule, i);
-            let cumulativeInterest = getCumulativeInterestPayment(amortizationSchedule, i);
-            let cumulativeRent = calculateCumulativeRent(monthlyIncome, i);
+    outstandingMortgageData = [];
+    for (let year of specificYears) {
+        let month = year * 12;
+    
+        if (month >= 0 && month <= loanTermInYears * 12) {
+            outstandingMortgageData.push(getRemainingLoanBalance(amortizationSchedule, month));
+        }
+    }
 
-            // Calculate the current value (property value + cumulative rent)
-            let currentValue = parseFloat(cumulativePrincipal[i]?.cumulativePrincipal || 0) + ((cumulativeRent * (1-(maintenanceCost/100))) * (1-(incomeTax/100))) - parseFloat(cumulativeInterest[i]?.cumulativeInterest || 0);
-
-            // Calculate the return on investment (ROI)
-            let initialInvestment = purchasePrice * (1-loanToValue) + purchasePrice * (propertyTax/100);
-            let returnOnInvestment = (currentValue / initialInvestment) * 100;
-
-            returnData.push(returnOnInvestment.toFixed(2));
+    returnData = [];
+    for (let year of specificYears) {
+        let month = year * 12;
+    
+        if (month >= 0 && month <= loanTermInYears * 12) {
+            returnData.push(getReturnValue(amortizationSchedule, month));
         }
     }
 
     initialInvestment = [purchasePrice * (1-loanToValue)];
 
+    // Populate table dataset
+    let monthlyData = amortizationSchedule.map((entry) => ({
+        Month: entry.month,
+        PropertyValue: parseFloat(entry.propertyValue),
+        Equity: parseFloat(entry.equity),
+        LoanAmount: parseFloat(entry.balance),
+        MonthlyPayment: parseFloat(entry.payment),
+        MonthlyInterestPayment: parseFloat(entry.interest),
+        MonthlyPrincipalPayment: parseFloat(entry.principal),
+        MonthlyIncome: parseFloat(entry.monthlyIncome),
+        MonthlyNetIncome: parseFloat(entry.monthlyNetIncome),
+        CashPosition: parseFloat(entry.cashPosition),
+        ReturnSinceInception: parseFloat(entry.returnSinceInception)
+    }));
+
+
     // Add console logs to check array values
+
     console.log('UpdateGraph: InvestmentAmount:', initialInvestment);
     console.log('UpdateGraph: cumulativeRentData:', cumulativeRentData);
     console.log('UpdateGraph: cumulativeInterestData:', cumulativeInterestData);
     console.log('UpdateGraph: cumulativePrincipalData:', cumulativePrincipalData);
     console.log('UpdateGraph: returnData:', returnData);
     console.log('UpdateGraph: propertyValueData:', propertyValueData);
-    console.log('UpdateGraph: OutstandingMortgageData:', OutstandingMortgageData);
+    console.log('UpdateGraph: OutstandingMortgageData:', outstandingMortgageData);
+
 
     // Update the charts here
+
     returnChart.data.datasets[0].data = initialInvestment;
     returnChart.data.datasets[1].data = cumulativeRentData;
     returnChart.data.datasets[2].data = cumulativeInterestData;
@@ -426,6 +577,11 @@ function updateGraph(){
     returnChart.update();
 
     balanceSheetChart.data.datasets[0].data = propertyValueData;
-    balanceSheetChart.data.datasets[1].data = OutstandingMortgageData;
+    balanceSheetChart.data.datasets[1].data = outstandingMortgageData;
     balanceSheetChart.update();
+
+
+    // Call the function to create and display the table with data
+
+    createTable(monthlyData, 1, 12);
 }

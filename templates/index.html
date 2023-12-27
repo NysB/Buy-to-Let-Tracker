@@ -18,6 +18,7 @@
             padding: 0;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
+            overflow: auto;
         }
         .header {
             background-color: #2f2f31; 
@@ -141,11 +142,27 @@
             height: auto; 
             display: block; 
         }
+        .horizontal-table-block{
+            flex: 4;
+            border: 1px solid #160101;
+            padding: 5px;
+            margin: 5px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            align-items: center;
+        }
+        .horizontal-table-block h2 {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+            color: #4CAF50;
+            font-size: 20px;
+        }
         .table {
-            width: 100%;
-            max-width: 100%;
+            width: 90%;
+            max-width: 90%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 2px;
         }
         .table th {
             background-color: rgb(105, 164, 217);
@@ -153,7 +170,7 @@
             padding: 8px;
             font-family: 'Times New Roman', Times, serif;
             font-style: normal;
-            font-size: 15px;
+            font-size: 13px;
             text-align: left;
         }
         .table td {
@@ -166,6 +183,12 @@
         }
         .table tr:nth-child(even) {
             background-color: rgb(222, 235, 247);
+        }
+        .horizontal-link-block{
+            flex: 1;
+            border: 1px solid #160101;
+            padding: 10px;
+            margin: 5px;
         }
         .horizontal-link-block{
             flex: 1;
@@ -335,14 +358,19 @@
         
     </div>
     <div class="horizontal-container">
+        <div class="horizontal-table-block">
+            <h2>Amortization Schedule</h2>
+            <div id="amortizationTableContainer" class="table"></div>
+            <script src="../static/js/returnGraph.js"></script>
+            <br></br>
+        </div>
+    </div>  
+    <div class="horizontal-container">
         <div class="horizontal-link-block">
             <a href="/comparisonPropertyData">All comp information</a>
         </div>
         <div class="horizontal-link-block">
             <a href="/historicalPurchaseData">Historical data</a>
-        </div>
-        <div class="horizontal-link-block">
-            <a href="/amortizationTable">Amortization Schedule</a>
         </div>
     </div>
 </body>
