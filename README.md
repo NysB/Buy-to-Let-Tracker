@@ -3,4 +3,5 @@
 This app will scrape information on properties in various city, and return an overview of the return that can be made by buying and letting.
 
 ## URL
-https://nysb.github.io/ 
+https://buy-to-let-tracker.azurewebsites.net/ 
+
