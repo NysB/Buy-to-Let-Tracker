@@ -1,16 +1,4 @@
 
-// Sample data
-const data = [
-    {
-        "attribute": "Purchase Price",
-        "city": "Cádiz",
-    },
-
-];
-
-// Initialize chart with default city
-updateChart();
-
 // Function to update the chart based on selected city
 function updateChart() {
     const selectedCity = document.getElementById('citySelect').value;
@@ -28,3 +16,40 @@ function updateChart() {
       document.getElementById('chart').appendChild(bar);
     });
 }
+
+
+// Function to fetch data from the server and create the graphs
+
+function historicalGraph() {
+    fetch('/historicalPurchaseData')
+        .then(response => response.json())
+        .then(data => {
+
+
+            // Generate cumulative data
+            
+            updateChart();
+
+
+            // Log arrays after the updateGraph function
+
+            console.log('initializeGraph: cumulativeRentData:', cumulativeRentData);
+            console.log('initializeGraph: cumulativeInterestData:', cumulativeInterestData);
+            console.log('initializeGraph: cumulativePrincipalData:', cumulativePrincipalData);
+            console.log('initializeGraph: returnData:', returnData);
+            console.log('initializeGraph: propertyValueData:', propertyValueData);
+            console.log('initializeGraph: outstandingMortgageData:', outstandingMortgageData);
+
+
+            // update Charts
+
+            returnChart.update();
+            balanceSheetChart.update();
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+historicalGraph();
+

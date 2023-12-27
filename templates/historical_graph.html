@@ -61,10 +61,17 @@
     <div class="horizontal-container">
         <div class="horizontal-search-block">
             <h2>Historical Overview Property Value</h2>
-            <canvas id="balanceSheetChart" class="chart"></canvas>
+            <label for="citySelect">Select City:</label>
+            <select id="citySelect" onchange="updateChart()">
+                <option value="Cádiz">Cádiz</option>
+                <option value="Estepona">Estepona</option>
+                <option value="Fuengirola">Fuengirola</option>
+            </select>
+            <div id="chart" class="chart"></div>
             <script src="../static/js/historicalGraph.js"></script>
         </div>
     </div>
+
 
 </body>
 </html>

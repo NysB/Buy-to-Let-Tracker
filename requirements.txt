@@ -4,7 +4,6 @@ gunicorn
 sqlalchemy
 numpy
 pandas
-math
 datetime
 pyodbc
 pathlib
