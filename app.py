@@ -11,7 +11,40 @@ from flask_cors import CORS, cross_origin
 # Database Setup
 ## Retrieve keys
 
-from Scripts.api_keys import server_name, database_name, user_name, password
+#from Scripts.api_keys import server_name, database_name, user_name, password
+
+import boto3
+from botocore.exceptions import ClientError
+import json
+
+secret_name = "prod/buy-to-let-tracker/AzureDB"
+region_name = "us-east-1"
+
+# Create a Secrets Manager client
+session = boto3.session.Session()
+client = session.client(
+    service_name='secretsmanager',
+    region_name=region_name
+    )
+
+try:
+    get_secret_value_response = client.get_secret_value(
+        SecretId=secret_name
+    )
+except ClientError as e:
+    print(f"Error retrieving secret: {e}")
+    raise e
+
+secret = get_secret_value_response['SecretString']
+
+# Parse the secret JSON string
+secret_dict = json.loads(secret)
+
+# Retrieve Azure database credentials
+server_name = "realestatetracker-server.database.windows.net"
+database_name = "realEstateTracker"
+user_name = secret_dict['username']
+password = secret_dict['password']
 
 ## Create connection string
 
@@ -25,6 +58,7 @@ try:
 
 except Exception as e:
     print("Connection failed:", e)
+
 
 ## Save data in DF
 
