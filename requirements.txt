@@ -3,4 +3,4 @@ numpy
 pyodbc
 flask
 flask_cors
-gunicorn==23.1.0
+gunicorn==21.2.0
