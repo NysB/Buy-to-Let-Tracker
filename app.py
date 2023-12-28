@@ -13,7 +13,7 @@ from flask_cors import CORS, cross_origin
 
 # Database Setup
 
-engine = create_engine("sqlite:///../Dataset/real_estate_data.sqlite")
+engine = create_engine("sqlite:///Dataset/real_estate_data.sqlite")
 metadata = MetaData()
 metadata.reflect(bind = engine)
 

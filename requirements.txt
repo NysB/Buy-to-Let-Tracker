@@ -1,6 +1,9 @@
 pandas
 numpy
-pyodbc
+sqlalchemy
+sqlalchemy.ext.declarative
+sqlalchemy.orm
+sqlalchemy.exc
 flask
 flask_cors
 gunicorn==21.2.0
