@@ -4,7 +4,6 @@ import numpy as np
 
 from sqlalchemy import create_engine, inspect, MetaData, Table, insert
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError
 
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS, cross_origin
