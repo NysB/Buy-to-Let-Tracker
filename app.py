@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 
 from sqlalchemy import create_engine, inspect, MetaData, Table, insert
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
 

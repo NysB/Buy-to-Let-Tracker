@@ -1,7 +1,6 @@
 pandas
 numpy
 sqlalchemy
-sqlalchemy.ext.declarative
 sqlalchemy.orm
 sqlalchemy.exc
 flask
