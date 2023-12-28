@@ -2,79 +2,38 @@
 import pandas as pd
 import numpy as np
 
-import pyodbc
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, MetaData, Table, insert
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import IntegrityError
 
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS, cross_origin
 
+
 # Database Setup
-## Retrieve keys
 
-#from Scripts.api_keys import server_name, database_name, user_name, password
+engine = create_engine("sqlite:///../Dataset/real_estate_data.sqlite")
+metadata = MetaData()
+metadata.reflect(bind = engine)
 
-import boto3
-from botocore.exceptions import ClientError
-import json
+Session = sessionmaker(bind=engine)
+session = Session()
 
-secret_name = "prod/buy-to-let-tracker/AzureDB"
-region_name = "us-east-1"
+# Define the Table objects
+enrichedPropertyData_table = Table('enrichedPropertyData', metadata, autoload_with=engine)
+comparisonPropertyData_table = Table('comparisonPropertyData', metadata, autoload_with=engine)
+historicalPurchaseData_table = Table('historicalPurchaseData', metadata, autoload_with=engine)
+historicalRentData_table = Table('historicalRentData', metadata, autoload_with=engine)
 
-# Create a Secrets Manager client
-session = boto3.session.Session()
-client = session.client(
-    service_name='secretsmanager',
-    region_name=region_name
-    )
+# Read data using SQLAlchemy
+enrichedPropertyData_df = pd.read_sql_table(enrichedPropertyData_table.name, engine)
+comparisonPropertyData_df = pd.read_sql_table(comparisonPropertyData_table.name, engine)
+historicalPurchaseData_df = pd.read_sql_table(historicalPurchaseData_table.name, engine)
+historicalRentData_df = pd.read_sql_table(historicalRentData_table.name, engine)
 
-try:
-    get_secret_value_response = client.get_secret_value(
-        SecretId=secret_name
-    )
-except ClientError as e:
-    print(f"Error retrieving secret: {e}")
-    raise e
-
-secret = get_secret_value_response['SecretString']
-
-# Parse the secret JSON string
-secret_dict = json.loads(secret)
-
-# Retrieve Azure database credentials
-server_name = "realestatetracker-server.database.windows.net"
-database_name = "realEstateTracker"
-user_name = secret_dict['username']
-password = secret_dict['password']
-
-## Create connection string
-
-connection_string = "DRIVER={ODBC Driver 18 for SQL Server};SERVER={"+ server_name + "};DATABASE={" + database_name + "};UID={" + user_name + "};PWD={" + password + "}"
-
-## Try to establish a connection
-
-try:
-    engine = create_engine(f"mssql+pyodbc:///?odbc_connect={connection_string}")
-    connection = engine.connect()
-
-except Exception as e:
-    print("Connection failed:", e)
-
-
-## Save data in DF
-
-queryEnrichedPropertyData = f"SELECT * FROM enrichedPropertyData"
-queryComparisonPropertyData = f"SELECT * FROM comparisonPropertyData"
-queryHistoricalPurchaseData = f"SELECT * FROM historicalPurchaseData"
-queryHistoricalRentData = f"SELECT * FROM historicalRentData"
-
-enrichedPropertyData_df = pd.read_sql(queryEnrichedPropertyData, connection)
-comparisonPropertyData_df = pd.read_sql(queryComparisonPropertyData, connection)
-historicalPurchaseData_df = pd.read_sql(queryHistoricalPurchaseData, connection)
-historicalRentData_df = pd.read_sql(queryHistoricalRentData, connection)
-
-## Close connection
-
-connection.close()
+# Close session
+session.close()
 
 
 # initialzie the flask app
