@@ -13,14 +13,19 @@ let selectedProperty = null;
 
 // Function to fetch data from the server and initialize the map with it
 function initializeMap() {
+  showLoadingSpinner();
+
   fetch('/start')
     .then(response => response.json())
     .then(data => {
       properties = data;
       updateMap(properties);
+
+      hideLoadingSpinner();
     })
     .catch(error => {
       console.error('Error fetching data:', error);
+      hideLoadingSpinner();
     });
 }
 
@@ -49,6 +54,18 @@ function filterAndRefreshMap() {
       console.error('Error fetching filtered data:', error);
     });
 }
+
+
+// Function to show the loading spinner
+function showLoadingSpinner() {
+  document.getElementById('loading-spinner').style.display = 'block';
+}
+
+// Function to hide the loading spinner
+function hideLoadingSpinner() {
+  document.getElementById('loading-spinner').style.display = 'none';
+}
+
 
 // Attach the filterAndRefreshMap function to the Filter button click event
 document.getElementById('filter-button').addEventListener('click', filterAndRefreshMap);
